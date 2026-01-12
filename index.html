@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>嗑学 CPology - 国际关系性动力学研究期刊</title>
+    <!-- 使用 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Babel 用于在浏览器中实时转译 JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- 使用 Import Maps 预定义模块路径 -->
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.2.0",
+          "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+          "lucide-react": "https://esm.sh/lucide-react@0.284.0"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- 注意：这里使用 type="text/babel" 并通过 data-type="module" 配合 Babel 处理导入 -->
+    <script type="text/babel" data-type="module">
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
+      // 注意：在没有构建工具的情况下，直接导入 .jsx 会报错
+      // 这里我们假设你将 App 组件内容放在下方，或者如果你使用 Vite 部署，它会自动处理
+      // 为了演示修复，我们直接导入 App。在 Vercel 部署时，请确保使用 npm run build
+      import App from './kexue_journal.jsx';
+
+      const rootElement = document.getElementById('root');
+      if (rootElement) {
+        ReactDOM.createRoot(rootElement).render(
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        );
+      }
+    </script>
+  </body>
+</html>
