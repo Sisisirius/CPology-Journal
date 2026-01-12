@@ -4,12 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>嗑学 CPology - 国际关系性动力学研究期刊</title>
-    <!-- 使用 Tailwind CSS CDN -->
+    <!-- 引入核心库 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Babel 用于在浏览器中实时转译 JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- 使用 Import Maps 预定义模块路径 -->
     <script type="importmap">
       {
         "imports": {
@@ -19,27 +17,125 @@
         }
       }
     </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+      .font-serif { font-family: 'Noto Serif SC', serif; }
+      body { margin: 0; padding: 0; }
+      #root { min-height: 100vh; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- 加载中的占位提示，防止白屏等待感 -->
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #b91c1c; font-weight: bold;">
+        期刊校对中，请稍候...
+      </div>
+    </div>
 
-    <!-- 注意：这里使用 type="text/babel" 并通过 data-type="module" 配合 Babel 处理导入 -->
     <script type="text/babel" data-type="module">
-      import React from 'react';
+      import React, { useState, useEffect } from 'react';
       import ReactDOM from 'react-dom/client';
-      // 注意：在没有构建工具的情况下，直接导入 .jsx 会报错
-      // 这里我们假设你将 App 组件内容放在下方，或者如果你使用 Vite 部署，它会自动处理
-      // 为了演示修复，我们直接导入 App。在 Vercel 部署时，请确保使用 npm run build
-      import App from './kexue_journal.jsx';
+      import { 
+        Search, Menu, Globe, ExternalLink, Mail, BookOpen, Send, 
+        TrendingUp, BarChart3, Star, X, ChevronDown, ChevronLeft, 
+        ChevronRight, FileText, Share2, Printer 
+      } from 'lucide-react';
 
-      const rootElement = document.getElementById('root');
-      if (rootElement) {
-        ReactDOM.createRoot(rootElement).render(
-          <React.StrictMode>
-            <App />
-          </React.StrictMode>
+      // 直接在 HTML 内部定义 App 组件，避免文件引用错误
+      const App = () => {
+        const [lang, setLang] = useState('zh');
+        const [isMenuOpen, setIsMenuOpen] = useState(false);
+        const [currentSlide, setCurrentSlide] = useState(0);
+        const [readingArticle, setReadingArticle] = useState(null);
+
+        const slides = [
+          {
+            id: 1,
+            category: { zh: "本周推荐", en: "Featured Article" },
+            tag: { zh: "实证研究", en: "Empirical Study" },
+            title: { 
+              zh: "论‘宿敌向’关系中的张力传递：从《国产动画》到《日产游戏》的跨文化实证研究", 
+              en: "Tension Transmission in 'Arch-Nemesis' Relationships" 
+            },
+            desc: { 
+              zh: "本文探讨了‘相爱相杀’模式在不同文化背景下的受众心理反馈机制。", 
+              en: "Exploring the psychological feedback mechanisms of 'love-hate' patterns." 
+            },
+            author: "Dr. Shipper Wang",
+            image: "https://images.unsplash.com/photo-1511447333015-45b65e60f6d1?auto=format&fit=crop&q=80&w=1200",
+            content: {
+              zh: `<h3>摘要</h3><p>本研究聚焦于二次元文化中最为长盛不衰的叙事动力学之一——“宿敌关系”...</p><p>通过对过去十年间代表性作品的语义分析，我们发现张力的核心并非来源于冲突本身，而是来源于冲突过程中的情感位移。</p>`
+            }
+          }
+        ];
+
+        const t = {
+          zh: { title: "嗑学", subtitle: "国际关系性动力学与浪漫修辞研究期刊", nav: ["当前期刊", "往期回顾", "投稿须知", "关于我们"], footer: "© 2024 嗑学出版集团。保留所有权利。" },
+          en: { title: "CPology", subtitle: "Journal of Relational Dynamics", nav: ["Current", "Archive", "Submit", "About"], footer: "© 2024 CPology Group. All rights reserved." }
+        };
+
+        const current = t[lang];
+        const activeSlide = slides[currentSlide];
+
+        return (
+          <div className="min-h-screen bg-white text-slate-900 font-sans">
+            <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b px-4">
+              <div className="max-w-7xl mx-auto h-16 flex justify-between items-center">
+                <h1 className="text-3xl font-black text-red-700 italic">{current.title}<span className="text-slate-400 not-italic">.</span></h1>
+                <div className="flex items-center gap-4">
+                  <button onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')} className="text-xs font-bold flex items-center gap-1 border px-2 py-1 rounded">
+                    <Globe size={14} /> {lang === 'zh' ? 'EN' : '中文'}
+                  </button>
+                  <Menu className="cursor-pointer" onClick={() => setIsMenuOpen(true)} />
+                </div>
+              </div>
+            </header>
+
+            <main className="max-w-7xl mx-auto px-4 py-12">
+               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  <div className="lg:col-span-8 cursor-pointer" onClick={() => setReadingArticle(activeSlide)}>
+                    <div className="relative aspect-video rounded overflow-hidden shadow-2xl">
+                      <img src={activeSlide.image} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
+                        <span className="text-red-400 text-xs font-bold tracking-widest uppercase mb-2">{activeSlide.category[lang]}</span>
+                        <h2 className="text-white text-3xl md:text-5xl font-serif font-bold mb-4">{activeSlide.title[lang]}</h2>
+                        <p className="text-gray-300 italic">{activeSlide.desc[lang]}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <aside className="lg:col-span-4">
+                    <div className="bg-slate-900 text-white p-8 rounded border-l-8 border-red-700">
+                      <h3 className="text-2xl font-serif mb-2 italic">Impact Factor</h3>
+                      <p className="text-4xl font-bold text-red-500 mb-6">69.420</p>
+                      <button className="w-full bg-red-700 hover:bg-red-800 py-3 font-bold uppercase tracking-widest text-sm transition-colors">
+                        Submit Paper
+                      </button>
+                    </div>
+                  </aside>
+               </div>
+            </main>
+
+            {readingArticle && (
+              <div className="fixed inset-0 z-[100] bg-white overflow-y-auto p-6 animate-in fade-in slide-in-from-bottom-4">
+                <div className="max-w-3xl mx-auto">
+                  <button onClick={() => setReadingArticle(null)} className="mb-8 text-red-700 font-bold flex items-center gap-2">
+                    <X /> CLOSE ARTICLE
+                  </button>
+                  <h1 className="text-4xl font-serif font-bold mb-6">{readingArticle.title[lang]}</h1>
+                  <div className="prose prose-lg font-serif" dangerouslySetInnerHTML={{ __html: readingArticle.content[lang] }} />
+                </div>
+              </div>
+            )}
+
+            <footer className="bg-slate-900 text-white py-12 text-center mt-20">
+              <p className="text-slate-500 text-xs">{current.footer}</p>
+            </footer>
+          </div>
         );
-      }
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>
