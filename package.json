@@ -23,25 +23,3 @@
     "tailwindcss": "^3.3.3"
   }
 }
-```
-
-### 2. 本地修复并重新上传
-如果你是在本地运行报错，请在 Git Bash 中依次执行：
-
-1.  **安装依赖：**
-    ```bash
-    npm install
-    ```
-    *这会根据 `package.json` 下载 `node_modules` 文件夹（包含 vite）。*
-
-2.  **测试打包：**
-    ```bash
-    npm run build
-    ```
-    *如果这步在本地成功了，说明代码没问题。*
-
-3.  **提交到 GitHub：**
-    ```bash
-    git add .
-    git commit -m "Add package.json and dependencies"
-    git push
