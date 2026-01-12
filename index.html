@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>嗑学 CPology - 国际关系性动力学研究期刊</title>
-    <!-- 引入核心库 -->
+    <!-- 核心库引入 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
@@ -20,13 +20,13 @@
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
       .font-serif { font-family: 'Noto Serif SC', serif; }
-      body { margin: 0; padding: 0; }
+      body { margin: 0; padding: 0; overflow-x: hidden; }
       #root { min-height: 100vh; }
+      .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
   </head>
   <body>
     <div id="root">
-      <!-- 加载中的占位提示，防止白屏等待感 -->
       <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #b91c1c; font-weight: bold;">
         期刊校对中，请稍候...
       </div>
@@ -36,12 +36,9 @@
       import React, { useState, useEffect } from 'react';
       import ReactDOM from 'react-dom/client';
       import { 
-        Search, Menu, Globe, ExternalLink, Mail, BookOpen, Send, 
-        TrendingUp, BarChart3, Star, X, ChevronDown, ChevronLeft, 
-        ChevronRight, FileText, Share2, Printer 
+        Search, Menu, Globe, BookOpen, X, BarChart3, TrendingUp, Send, ChevronRight, FileText, Share2, Printer 
       } from 'lucide-react';
 
-      // 直接在 HTML 内部定义 App 组件，避免文件引用错误
       const App = () => {
         const [lang, setLang] = useState('zh');
         const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,15 +61,38 @@
             author: "Dr. Shipper Wang",
             image: "https://images.unsplash.com/photo-1511447333015-45b65e60f6d1?auto=format&fit=crop&q=80&w=1200",
             content: {
-              zh: `<h3>摘要</h3><p>本研究聚焦于二次元文化中最为长盛不衰的叙事动力学之一——“宿敌关系”...</p><p>通过对过去十年间代表性作品的语义分析，我们发现张力的核心并非来源于冲突本身，而是来源于冲突过程中的情感位移。</p>`
+              zh: `<h3>摘要</h3><p>本研究聚焦于二次元文化中最为长盛不衰的叙事动力学之一——“宿敌关系”。通过对过去十年间代表性作品的语义分析，我们发现张力的核心并非来源于冲突本身，而是来源于冲突过程中的情感位移。</p><h3>核心论点</h3><p>“宿敌的存在，本质上是对自我完整性的一种破坏性重塑。”</p>`
             }
+          },
+          {
+            id: 2,
+            category: { zh: "深度专题", en: "Deep Dive" },
+            tag: { zh: "心理学研究", en: "Psychological Report" },
+            title: { 
+              zh: "‘镜像双子’设定的代入感调查：为何我们对‘另一个自我’如此着迷？", 
+              en: "Immersion in 'Mirror Twin' Tropes" 
+            },
+            desc: { 
+              zh: "分析双生子设定中的自恋投射与情感边界模糊现象。", 
+              en: "Analyzing narcissistic projection and blurred emotional boundaries." 
+            },
+            author: "Prof. Gemini Muse",
+            image: "https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&q=80&w=1200",
+            content: { zh: "<h3>引言</h3><p>这里是关于镜像双子的深度研究内容。探讨了自恋心理在双生设定中的体现...</p>" }
           }
         ];
 
         const t = {
-          zh: { title: "嗑学", subtitle: "国际关系性动力学与浪漫修辞研究期刊", nav: ["当前期刊", "往期回顾", "投稿须知", "关于我们"], footer: "© 2024 嗑学出版集团。保留所有权利。" },
-          en: { title: "CPology", subtitle: "Journal of Relational Dynamics", nav: ["Current", "Archive", "Submit", "About"], footer: "© 2024 CPology Group. All rights reserved." }
+          zh: { title: "嗑学", subtitle: "国际关系性动力学与浪漫修辞研究期刊", nav: ["当前期刊", "往期回顾", "投稿须知", "关于我们"], metrics: "期刊指标", trending: "高频引用", footer: "© 2024 嗑学出版集团。保留所有权利。" },
+          en: { title: "CPology", subtitle: "Journal of Relational Dynamics", nav: ["Current", "Archive", "Submit", "About"], metrics: "Metrics", trending: "Trending", footer: "© 2024 CPology Group. All rights reserved." }
         };
+
+        useEffect(() => {
+          const timer = setInterval(() => {
+            if (!readingArticle) setCurrentSlide(prev => (prev + 1) % slides.length);
+          }, 5000);
+          return () => clearInterval(timer);
+        }, [readingArticle]);
 
         const current = t[lang];
         const activeSlide = slides[currentSlide];
@@ -80,55 +100,64 @@
         return (
           <div className="min-h-screen bg-white text-slate-900 font-sans">
             <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b px-4">
-              <div className="max-w-7xl mx-auto h-16 flex justify-between items-center">
-                <h1 className="text-3xl font-black text-red-700 italic">{current.title}<span className="text-slate-400 not-italic">.</span></h1>
+              <div className="max-w-7xl mx-auto h-16 md:h-20 flex justify-between items-center">
+                <div className="flex items-center gap-8">
+                  <h1 className="text-3xl font-black text-red-700 italic">{current.title}.</h1>
+                  <nav className="hidden lg:flex gap-6 text-xs font-bold uppercase tracking-widest text-slate-500">
+                    {current.nav.map(item => <a key={item} href="#" className="hover:text-red-700">{item}</a>)}
+                  </nav>
+                </div>
                 <div className="flex items-center gap-4">
-                  <button onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')} className="text-xs font-bold flex items-center gap-1 border px-2 py-1 rounded">
+                  <button onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')} className="text-xs font-bold flex items-center gap-1 border px-3 py-1.5 rounded-full hover:bg-slate-50">
                     <Globe size={14} /> {lang === 'zh' ? 'EN' : '中文'}
                   </button>
-                  <Menu className="cursor-pointer" onClick={() => setIsMenuOpen(true)} />
+                  <Menu className="cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)} />
                 </div>
               </div>
             </header>
 
-            <main className="max-w-7xl mx-auto px-4 py-12">
-               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                  <div className="lg:col-span-8 cursor-pointer" onClick={() => setReadingArticle(activeSlide)}>
-                    <div className="relative aspect-video rounded overflow-hidden shadow-2xl">
-                      <img src={activeSlide.image} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                        <span className="text-red-400 text-xs font-bold tracking-widest uppercase mb-2">{activeSlide.category[lang]}</span>
-                        <h2 className="text-white text-3xl md:text-5xl font-serif font-bold mb-4">{activeSlide.title[lang]}</h2>
-                        <p className="text-gray-300 italic">{activeSlide.desc[lang]}</p>
+            <main className="max-w-7xl mx-auto px-4 py-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <div className="lg:col-span-8">
+                  <div className="relative aspect-video rounded-sm overflow-hidden bg-slate-100 shadow-xl mb-8 cursor-pointer group" onClick={() => setReadingArticle(activeSlide)}>
+                    <img src={activeSlide.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-8 flex flex-col justify-end">
+                      <span className="text-red-400 text-xs font-bold tracking-widest uppercase mb-2">{activeSlide.category[lang]}</span>
+                      <h2 className="text-white text-4xl font-serif font-bold mb-4">{activeSlide.title[lang]}</h2>
+                      <div className="flex items-center gap-4 text-gray-300 text-sm font-bold italic">
+                        <span>By {activeSlide.author}</span>
+                        <span>{activeSlide.tag[lang]}</span>
                       </div>
                     </div>
                   </div>
-                  <aside className="lg:col-span-4">
-                    <div className="bg-slate-900 text-white p-8 rounded border-l-8 border-red-700">
-                      <h3 className="text-2xl font-serif mb-2 italic">Impact Factor</h3>
-                      <p className="text-4xl font-bold text-red-500 mb-6">69.420</p>
-                      <button className="w-full bg-red-700 hover:bg-red-800 py-3 font-bold uppercase tracking-widest text-sm transition-colors">
-                        Submit Paper
-                      </button>
-                    </div>
-                  </aside>
-               </div>
+                </div>
+                <aside className="lg:col-span-4 space-y-8">
+                  <div className="bg-slate-900 text-white p-8 rounded-sm border-l-8 border-red-700">
+                    <h3 className="text-2xl font-serif italic mb-2">Impact Factor</h3>
+                    <p className="text-5xl font-black text-red-600 mb-6 tracking-tighter">69.420</p>
+                    <button className="w-full bg-red-700 py-3 font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-red-800 transition-colors">
+                      <Send size={14} /> Submit Manuscript
+                    </button>
+                  </div>
+                </aside>
+              </div>
             </main>
 
             {readingArticle && (
-              <div className="fixed inset-0 z-[100] bg-white overflow-y-auto p-6 animate-in fade-in slide-in-from-bottom-4">
+              <div className="fixed inset-0 z-[100] bg-white overflow-y-auto p-6 md:p-12 animate-in fade-in slide-in-from-bottom-8">
                 <div className="max-w-3xl mx-auto">
-                  <button onClick={() => setReadingArticle(null)} className="mb-8 text-red-700 font-bold flex items-center gap-2">
-                    <X /> CLOSE ARTICLE
+                  <button onClick={() => setReadingArticle(null)} className="mb-12 text-red-700 font-bold flex items-center gap-2 uppercase tracking-widest text-sm">
+                    <X /> Back to Journal
                   </button>
-                  <h1 className="text-4xl font-serif font-bold mb-6">{readingArticle.title[lang]}</h1>
-                  <div className="prose prose-lg font-serif" dangerouslySetInnerHTML={{ __html: readingArticle.content[lang] }} />
+                  <h1 className="text-4xl md:text-5xl font-serif font-bold mb-8 leading-tight">{readingArticle.title[lang]}</h1>
+                  <div className="prose prose-lg font-serif text-slate-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: readingArticle.content[lang] }} />
                 </div>
               </div>
             )}
 
-            <footer className="bg-slate-900 text-white py-12 text-center mt-20">
-              <p className="text-slate-500 text-xs">{current.footer}</p>
+            <footer className="bg-slate-900 text-white py-16 text-center">
+              <h1 className="text-2xl font-black text-red-700 italic mb-4">{current.title}</h1>
+              <p className="text-slate-500 text-[10px] uppercase tracking-[0.2em]">{current.footer}</p>
             </footer>
           </div>
         );
